@@ -5,6 +5,7 @@ on:
     branches: [ main ] # Or your main branch name (e.g., master)
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
