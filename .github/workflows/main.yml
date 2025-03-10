@@ -1,0 +1,51 @@
+name: Build TWRP
+
+on:
+  push:
+    branches: [ main ] # Or your main branch name (e.g., master)
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest # or a specific ubuntu version, see comments
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Required for repo sync
+
+      - name: Setup Environment
+        run: |
+          sudo apt update
+          sudo apt install -y openjdk-8-jdk android-tools-adb android-tools-fastboot git repo python3 zip curl libncurses5-dev gcc g++ make
+
+          #Install Repo
+          mkdir -p ~/bin
+          curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
+          chmod a+x ~/bin/repo
+          export PATH=${PATH}:~/bin
+
+      - name: Initialize Repo
+        run: |
+          repo init -u https://github.com/cabagekiller/recovery_xiaomi_lake.git -b twrp.12-1 #Adjust twrp version as needed
+          repo sync -j$(nproc --all)
+
+      - name: Copy Device Tree
+        run: |
+          mkdir -p device/xiaomi/lake
+          cp -r ./* device/xiaomi/lake/
+          rm -rf AndroidManifest.xml .git .github LICENSE README.md vendor_name
+
+      - name: Build TWRP
+        run: |
+          source build/envsetup.sh
+          export ALLOW_MISSING_DEPENDENCIES=true
+          lunch omni_lake-user #Replace 'lake' with the actual name for the device
+          make recoveryimage -j$(nproc --all)
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: twrp_lake
+          path: out/target/product/lake/recovery.img  #Adjust path to reflect device codename
