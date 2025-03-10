@@ -46,7 +46,7 @@ jobs:
           make recoveryimage -j$(nproc --all)
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: twrp_lake
           path: out/target/product/lake/recovery.img  #Adjust path to reflect device codename
