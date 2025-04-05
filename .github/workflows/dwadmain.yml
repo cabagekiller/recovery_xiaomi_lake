@@ -29,8 +29,7 @@ jobs:
 
       - name: Initialize Repo
         run: |
-          repo init -u https://github.com/cabagekiller/recovery_xiaomi_lake.git -b twrp.12-1 #Adjust twrp version as needed
-          repo sync -j$(nproc --all)
+          git clone https://github.com/cabagekiller/recovery_xiaomi_lake.git -b twrp.12-1 #Adjust twrp version as needed
 
       - name: Copy Device Tree
         run: |
