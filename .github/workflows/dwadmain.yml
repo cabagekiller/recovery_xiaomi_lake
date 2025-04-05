@@ -40,7 +40,6 @@ jobs:
 
       - name: Build TWRP
         run: |
-          source build/envsetup.sh
           export ALLOW_MISSING_DEPENDENCIES=true
           lunch omni_lake-user #Replace 'lake' with the actual name for the device
           make recoveryimage -j$(nproc --all)
